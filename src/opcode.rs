@@ -1354,7 +1354,7 @@ opcode! {
 // === 5.15 ===
 
 opcode! {
-    /// Make a directory, equivalent to `mkdirat2(2)`.
+    /// Make a directory, equivalent to `mkdirat(2)`.
     pub struct MkDirAt {
         dirfd: { impl sealed::UseFd },
         pathname: { *const libc::c_char },
@@ -1377,7 +1377,7 @@ opcode! {
 }
 
 opcode! {
-    /// Create a symlink, equivalent to `symlinkat2(2)`.
+    /// Create a symlink, equivalent to `symlinkat(2)`.
     pub struct SymlinkAt {
         newdirfd: { impl sealed::UseFd },
         target: { *const libc::c_char },
@@ -1400,7 +1400,7 @@ opcode! {
 }
 
 opcode! {
-    /// Create a hard link, equivalent to `linkat2(2)`.
+    /// Create a hard link, equivalent to `linkat(2)`.
     pub struct LinkAt {
         olddirfd: { impl sealed::UseFd },
         oldpath: { *const libc::c_char },
@@ -1662,6 +1662,12 @@ opcode! {
     ///
     /// A fixed (pre-mapped) buffer can optionally be used from pre-mapped buffers that have been
     /// previously registered with [`Submitter::register_buffers`](crate::Submitter::register_buffers).
+    ///
+    /// This operation might result in two completion queue entries.
+    /// See the `IORING_OP_SEND_ZC` section at [io_uring_enter][] for the exact semantics.
+    /// Notifications posted by this operation can be checked with [notif](crate::cqueue::notif).
+    ///
+    /// [io_uring_enter]: https://man7.org/linux/man-pages/man2/io_uring_enter.2.html
     pub struct SendZc {
         fd: { impl sealed::UseFixed },
         buf: { *const u8 },
